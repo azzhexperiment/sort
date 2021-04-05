@@ -8,3 +8,5 @@ Personal JS sorting library. WIP.
   - Uglify
   - Gzip
 - Write tests
+  - Standard
+  - Unit tests
