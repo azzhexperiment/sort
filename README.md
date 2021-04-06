@@ -10,6 +10,7 @@ Personal JS sorting library. WIP.
 - Write tests
   - Standard
   - Unit tests
+- Remove local test from source
 
 ### Known problems
 - mergeSort is running very slowly (~3600ms for 200k values) as compared to quick sort (~30ms!!!), which suggests huge room for improvement. Root cause still unknown.
