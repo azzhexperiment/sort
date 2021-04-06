@@ -216,13 +216,17 @@ Array.prototype.mergeSort = function (order = 'asc') {
 
   function _merge (array, left, right) {
     let i = 0
+    let leftIndex  = 0
+    let rightIndex = 0
 
     if (order === 'desc') {
-      while (left.length && right.length)
+      while (leftIndex < left.length && rightIndex < right.length) {
         array[i++] = (right[0] > left[0]) ? right.shift() : left.shift()
+      }
     } else {
-      while (left.length && right.length)
+      while (leftIndex < left.length && rightIndex < right.length) {
         array[i++] = (right[0] < left[0]) ? right.shift() : left.shift()
+      }
     }
 
     while (left.length)  array[i++] = left.shift()
@@ -248,7 +252,7 @@ function swap (array, i, j) {
 \******************************************************************************/
 
 const arr = []
-const len = 2000000
+const len = 200000
 
 // Generate a random array
 while (arr.length < len) arr.push(Math.ceil(Math.random() * 100))
@@ -263,7 +267,7 @@ while (arr.length < len) arr.push(Math.ceil(Math.random() * 100))
 console.log('-----------------------------------------------------------------')
 
 const start = new Date().getTime()
-arr.mergeSort('asc')
+arr.quickSort('asc')
 const end   = new Date().getTime()
 
 // console.log(`Sorted array is [${arr}]`)
