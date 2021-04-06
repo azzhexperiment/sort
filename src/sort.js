@@ -127,20 +127,66 @@ Array.prototype.selectionSort = function (order = 'asc') {
 }
 
 Array.prototype.heapSort = function (order = 'asc') {
+  _heapify(this)
 
+  let end = this.length - 1
+
+  while (end > 0) {
+    swap(this, end, 0)
+    end--
+    _siftDown(this, 0, end)
+  }
+
+  /**
+   * Converts an array into the heap data structure.
+   *
+   * @param {Array} array
+   */
+  function _heapify (array) {
+    let start = Math.floor((array.length / 2) - 1)
+    const end = array.length
+
+    while (start >= 0) {
+      _siftDown(array, start, end)
+      start--
+    }
+  }
+
+  /**
+   * Descends depth-first into a heap and swap elements.
+   *
+   * @param {Array} array
+   * @param {Number} start
+   * @param {Number} end
+   */
+  function _siftDown (array, start, end) {
+    let root = start
+    let child
+
+    while ((root * 2) + 1 <= end) {
+      child = (root * 2) + 1
+
+      if (child + 1 <= end && array[child] < array[child + 1]) child++
+
+      if (array[root] < array[child]) {
+        swap(array, root, child)
+        root = child
+      } else return
+    }
+  }
 }
 
 /**
  * Swap 2 elements in an array.
  *
  * @param {Array} array
- * @param {Number} leftIndex
- * @param {Number} rightIndex
+ * @param {Number} i
+ * @param {Number} j
  */
-function swap (array, leftIndex, rightIndex) {
-  const temp = array[leftIndex]
-  array[leftIndex] = array[rightIndex]
-  array[rightIndex] = temp
+function swap (array, i, j) {
+  const temp = array[i]
+  array[i] = array[j]
+  array[j] = temp
 }
 
 /******************************************************************************\
@@ -148,7 +194,7 @@ function swap (array, leftIndex, rightIndex) {
 \******************************************************************************/
 
 const arr = []
-const len = 20000
+const len = 200
 
 // Generate a random array
 while (arr.length < len) arr.push(Math.ceil(Math.random() * 100))
@@ -163,7 +209,7 @@ console.log(`Original array is [${arr}]`)
 console.log('-----------------------------------------------------------------')
 
 const start = new Date().getTime()
-arr.selectionSort('desc')
+arr.heapSort('asc')
 const end = new Date().getTime()
 const duration = end - start
 console.log(`Sorted array is [${arr}]`)
