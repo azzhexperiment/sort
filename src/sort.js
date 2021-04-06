@@ -3,6 +3,14 @@
  * arrays. Does not work on objects.
  *
  * Defaults to ascending sort in case of typo and user will not be notified.
+ *
+ * Types of sorts includes:
+ *   - insertion sort
+ *   - quick sort
+ *   - merge sort
+ *   - heap sort
+ *   - selection sort
+ *   - bubble sort
 \******************************************************************************/
 
 /**
@@ -12,17 +20,13 @@
  */
 Array.prototype.insertionSort = function (order = 'asc') {
   for (let i = 1; i < this.length; i++) {
-    if (order === 'des') {
+    if (order === 'desc') {
       for (let j = i; this[j - 1] < this[j]; j--) {
-        const temp = this[j]
-        this[j] = this[j - 1]
-        this[j - 1] = temp
+        swap(this, j - 1, j)
       }
     } else {
       for (let j = i; this[j - 1] > this[j]; j--) {
-        const temp = this[j]
-        this[j] = this[j - 1]
-        this[j - 1] = temp
+        swap(this, j - 1, j)
       }
     }
   }
@@ -31,65 +35,138 @@ Array.prototype.insertionSort = function (order = 'asc') {
 /**
  * Performs in-place bubble sort.
  *
- * @param {*} array
+ * @param {String} order
  */
 Array.prototype.bubbleSort = function (order = 'asc') {
-//
+  for (let i = 0; i < this.length; i++) {
+    let swapped = false
+
+    if (order === 'desc') {
+      for (let j = 0; j < this.length - i - 1; j++) {
+        if (this[j] < this[j + 1]) {
+          swap(this, j, j + 1)
+          swapped = true
+        }
+      }
+      if (!swapped) break
+    } else {
+      for (let j = 0; j < this.length - i - 1; j++) {
+        if (this[j] > this[j + 1]) {
+          swap(this, j, j + 1)
+          swapped = true
+        }
+      }
+      if (!swapped) break
+    }
+  }
 }
 
 /**
- * Performs in-place quick sort.
+ * Performs in-place quick sort with pivot at middle of array.
+ *
+ * @param {String} order
  */
-Array.prototype.quickSort = function (array) {
-  const ref = array[0]
-  let left = []; let right = []; const duplicates = []
+Array.prototype.quickSort = function (order = 'asc') {
+  _quickSort(this, 0, this.length - 1)
 
-  for (let i = 1; i < array.length; i++) {
-    if (array[i] === ref) duplicates.push(array[i])
+  function _quickSort (array, start, end) {
+    if (start >= end) return
 
-    array[i] < ref ? left.push(array[i]) : right.push(array[i])
+    const pivot = _partition(array, start, end)
+
+    _quickSort(array, start, pivot - 1)
+    _quickSort(array, pivot, end)
   }
 
-  if (left.length > 1) left = this.quickSort(left)
-  if (right.length > 1) right = this.quickSort(right)
+  function _partition (array, start, end) {
+    const pivot = array[Math.floor((start + end) / 2)]
+    let leftIndex = start
+    let rightIndex = end
 
-  return left.concat(ref, duplicates, right)
+    while (leftIndex <= rightIndex) {
+      if (order === 'desc') {
+        while (array[leftIndex] > pivot) leftIndex++
+        while (array[rightIndex] < pivot) rightIndex--
+      } else {
+        while (array[leftIndex] < pivot) leftIndex++
+        while (array[rightIndex] > pivot) rightIndex--
+      }
+
+      if (leftIndex <= rightIndex) {
+        swap(array, leftIndex, rightIndex)
+        leftIndex++
+        rightIndex--
+      }
+    }
+
+    return leftIndex
+  }
 }
 
+/**
+ * Performs in-place selection sort.
+ *
+ * @param {String} order
+ */
+Array.prototype.selectionSort = function (order = 'asc') {
+  for (let i = 0; i < this.length; i++) {
+    let min = i
+
+    if (order === 'desc') {
+      for (let j = i + 1; j < this.length; j++) {
+        if (this[j] > this[min]) min = j
+      }
+    } else {
+      for (let j = i + 1; j < this.length; j++) {
+        if (this[j] < this[min]) min = j
+      }
+    }
+
+    if (i !== min) swap(this, i, min)
+  }
+}
+
+Array.prototype.heapSort = function (order = 'asc') {
+
+}
+
+/**
+ * Swap 2 elements in an array.
+ *
+ * @param {Array} array
+ * @param {Number} leftIndex
+ * @param {Number} rightIndex
+ */
+function swap (array, leftIndex, rightIndex) {
+  const temp = array[leftIndex]
+  array[leftIndex] = array[rightIndex]
+  array[rightIndex] = temp
+}
+
+/******************************************************************************\
+ * START OF MANUAL TESTS
+\******************************************************************************/
+
 const arr = []
-const len = 10
+const len = 20000
 
 // Generate a random array
 while (arr.length < len) arr.push(Math.ceil(Math.random() * 100))
 
 // Fill a decreasing array
-// for (let i = 11; i > 0;  i--) arr.push(i)
+// for (let i = 10; i > 0;  i--) arr.push(i)
 
 // Fill an inceasing array
 // for (let i = 0;  i < 10; i++) arr.push(i)
 
-
 console.log(`Original array is [${arr}]`)
-console.log(`-----------------------------------------------------------------`)
+console.log('-----------------------------------------------------------------')
 
-let start, end, duration
-
-start = new Date().getTime()
-arr.insertionSort('asc')
-end = new Date().getTime()
-duration = end - start
-console.log(`Sorted array ascending is [${arr}]`)
-console.log(`Time started is ${start}`)
-console.log(`Time ended is ${end}`)
-console.log(`Time taken is ${duration} ms`)
-
-console.log(`-----------------------------------------------------------------`)
-
-start = new Date().getTime()
-arr.insertionSort('des')
-end = new Date().getTime()
-duration = end - start
-console.log(`Sorted array descending is [${arr}]`)
+const start = new Date().getTime()
+arr.selectionSort('desc')
+const end = new Date().getTime()
+const duration = end - start
+console.log(`Sorted array is [${arr}]`)
 console.log(`Time started is ${start}`)
 console.log(`Time ended is ${end}`)
 console.log(`Time taken is ${duration} ms`)
