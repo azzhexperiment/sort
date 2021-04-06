@@ -195,7 +195,7 @@ Array.prototype.heapSort = function (order = 'asc') {
 }
 
 /**
- * Performs in-place merge sort using auxiliary arrays.
+ * Performs in-place merge sort using auxiliary arrays. Can be optimised.
  *
  * @param {String} order
  */
@@ -216,15 +216,13 @@ Array.prototype.mergeSort = function (order = 'asc') {
 
   function _merge (array, left, right) {
     let i = 0
-    let leftIndex  = 0
-    let rightIndex = 0
 
     if (order === 'desc') {
-      while (leftIndex < left.length && rightIndex < right.length) {
+      while (left.length && right.length) {
         array[i++] = (right[0] > left[0]) ? right.shift() : left.shift()
       }
     } else {
-      while (leftIndex < left.length && rightIndex < right.length) {
+      while (left.length && right.length) {
         array[i++] = (right[0] < left[0]) ? right.shift() : left.shift()
       }
     }
@@ -252,7 +250,7 @@ function swap (array, i, j) {
 \******************************************************************************/
 
 const arr = []
-const len = 200000
+const len = 20000
 
 // Generate a random array
 while (arr.length < len) arr.push(Math.ceil(Math.random() * 100))
@@ -263,12 +261,12 @@ while (arr.length < len) arr.push(Math.ceil(Math.random() * 100))
 // Fill an inceasing array
 // for (let i = 0;  i < 10; i++) arr.push(i)
 
-// console.log(`Original array is [${arr}]`)
+console.log(`Original array is [${arr}]`)
 console.log('-----------------------------------------------------------------')
 
 const start = new Date().getTime()
-arr.quickSort('asc')
+arr.mergeSort('desc')
 const end   = new Date().getTime()
 
-// console.log(`Sorted array is [${arr}]`)
+console.log(`Sorted array is [${arr}]`)
 console.log(`Time taken is ${end - start} ms`)
