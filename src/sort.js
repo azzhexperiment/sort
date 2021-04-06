@@ -80,15 +80,15 @@ Array.prototype.quickSort = function (order = 'asc') {
 
   function _partition (array, start, end) {
     const pivot = array[Math.floor((start + end) / 2)]
-    let leftIndex = start
+    let leftIndex  = start
     let rightIndex = end
 
     while (leftIndex <= rightIndex) {
       if (order === 'desc') {
-        while (array[leftIndex] > pivot) leftIndex++
+        while (array[leftIndex]  > pivot) leftIndex++
         while (array[rightIndex] < pivot) rightIndex--
       } else {
-        while (array[leftIndex] < pivot) leftIndex++
+        while (array[leftIndex]  < pivot) leftIndex++
         while (array[rightIndex] > pivot) rightIndex--
       }
 
@@ -126,6 +126,11 @@ Array.prototype.selectionSort = function (order = 'asc') {
   }
 }
 
+/**
+ * Performs in-place heap sort.
+ *
+ * @param {String} order
+ */
 Array.prototype.heapSort = function (order = 'asc') {
   _heapify(this)
 
@@ -155,7 +160,7 @@ Array.prototype.heapSort = function (order = 'asc') {
   /**
    * Descends depth-first into a heap and swap elements.
    *
-   * @param {Array} array
+   * @param {Array}  array
    * @param {Number} start
    * @param {Number} end
    */
@@ -163,30 +168,79 @@ Array.prototype.heapSort = function (order = 'asc') {
     let root = start
     let child
 
-    while ((root * 2) + 1 <= end) {
-      child = (root * 2) + 1
+    if (order === 'desc') {
+      while ((root * 2) + 1 <= end) {
+        child = (root * 2) + 1
 
-      if (child + 1 <= end && array[child] < array[child + 1]) child++
+        if (child + 1 <= end && array[child] < array[child + 1]) child++
 
-      if (array[root] < array[child]) {
-        swap(array, root, child)
-        root = child
-      } else return
+        if (array[root] < array[child]) {
+          swap(array, root, child)
+          root = child
+        } else return
+      }
+    } else {
+      while ((root * 2) + 1 <= end) {
+        child = (root * 2) + 1
+
+        if (child + 1 <= end && array[child] > array[child + 1]) child++
+
+        if (array[root] > array[child]) {
+          swap(array, root, child)
+          root = child
+        } else return
+      }
     }
+  }
+}
+
+/**
+ * Performs in-place merge sort using auxiliary arrays.
+ *
+ * @param {String} order
+ */
+Array.prototype.mergeSort = function (order = 'asc') {
+  _mergeSort(this)
+
+  function _mergeSort (array) {
+    if (array.length < 2) return
+
+    let mid   = Math.floor(array.length / 2)
+    let left  = array.slice(0, mid)
+    let right = array.slice(mid)
+
+    _mergeSort(left)
+    _mergeSort(right)
+    _merge(array, left, right)
+  }
+
+  function _merge (array, left, right) {
+    let i = 0
+
+    if (order === 'desc') {
+      while (left.length && right.length)
+        array[i++] = (right[0] > left[0]) ? right.shift() : left.shift()
+    } else {
+      while (left.length && right.length)
+        array[i++] = (right[0] < left[0]) ? right.shift() : left.shift()
+    }
+
+    while (left.length)  array[i++] = left.shift()
+    while (right.length) array[i++] = right.shift()
   }
 }
 
 /**
  * Swap 2 elements in an array.
  *
- * @param {Array} array
+ * @param {Array}  array
  * @param {Number} i
  * @param {Number} j
  */
 function swap (array, i, j) {
   const temp = array[i]
-  array[i] = array[j]
-  array[j] = temp
+  array[i]   = array[j]
+  array[j]   = temp
 }
 
 /******************************************************************************\
@@ -194,7 +248,7 @@ function swap (array, i, j) {
 \******************************************************************************/
 
 const arr = []
-const len = 200
+const len = 2000000
 
 // Generate a random array
 while (arr.length < len) arr.push(Math.ceil(Math.random() * 100))
@@ -205,14 +259,12 @@ while (arr.length < len) arr.push(Math.ceil(Math.random() * 100))
 // Fill an inceasing array
 // for (let i = 0;  i < 10; i++) arr.push(i)
 
-console.log(`Original array is [${arr}]`)
+// console.log(`Original array is [${arr}]`)
 console.log('-----------------------------------------------------------------')
 
 const start = new Date().getTime()
-arr.heapSort('asc')
-const end = new Date().getTime()
-const duration = end - start
-console.log(`Sorted array is [${arr}]`)
-console.log(`Time started is ${start}`)
-console.log(`Time ended is ${end}`)
-console.log(`Time taken is ${duration} ms`)
+arr.mergeSort('asc')
+const end   = new Date().getTime()
+
+// console.log(`Sorted array is [${arr}]`)
+console.log(`Time taken is ${end - start} ms`)
